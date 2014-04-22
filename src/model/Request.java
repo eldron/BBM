@@ -1,12 +1,21 @@
 package model;
 
 public class Request {
+	private int id;// request id, unique for each request
 	private String content;// content of the request
 	private String time;
 	private String location;
 	private User owner;// who raised the request
 	private User [] handlers;// people who handled the request
 	private boolean handled;// whether the request is handled
+	
+	public void setID(int value){
+		id = value;
+	}
+	
+	public int getID(){
+		return id;
+	}
 	
 	public void setContent(String value){
 		content = value;

@@ -1,7 +1,8 @@
 package model;
 
 public class User {
-	private String id;
+	private int id;// unique for every user, start from 0
+	private String name;// user name, also unique for every user
 	private String ip;
 	private boolean loggedin;
 	private User [] friends;
@@ -12,12 +13,21 @@ public class User {
 	public User(){
 		
 	}
-	public void setID(String value){
+	
+	public void setID(int value){
 		id = value;
 	}
 	
-	public String getID(){
+	public int getID(){
 		return id;
+	}
+	
+	public void setName(String value){
+		name = value;
+	}
+	
+	public String getName(){
+		return name;
 	}
 	
 	public void setIP(String value){
