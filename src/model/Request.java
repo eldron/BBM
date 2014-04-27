@@ -1,14 +1,31 @@
 package model;
 
+import java.util.LinkedList;
+
 public class Request {
 	private int id;// request id, unique for each request
 	private String content;// content of the request
 	private String time;
 	private String location;
-	private User owner;// who raised the request
-	private User [] handlers;// people who handled the request
+	private int owner;// who raised the request
+	private LinkedList<Integer> handlers;// people who handled the request
 	private boolean handled;// whether the request is handled
 	
+	public Request(int id, String content, String time, String location, int owner, String hs, int hd){
+		this.id = id;
+		this.content = content;
+		this.time = time;
+		this.location = location;
+		this.owner = owner;
+		this.handlers = new LinkedList<Integer>();
+		if(hs.length() > 0){
+			String [] strings = hs.split(":");
+			for(String s : strings){
+				this.handlers.add(Integer.parseInt(s));
+			}
+		}
+		this.handled = (hd == 1) ? true : false;
+	}
 	public void setID(int value){
 		id = value;
 	}
@@ -41,19 +58,19 @@ public class Request {
 		return location;
 	}
 	
-	public void setOwner(User value){
+	public void setOwner(int value){
 		owner = value;
 	}
 	
-	public User getOwner(){
+	public int getOwner(){
 		return owner;
 	}
 	
-	public void setHandlers(User [] value){
+	public void setHandlers(LinkedList<Integer> value){
 		handlers = value;
 	}
 	
-	public User [] getHandlers(){
+	public LinkedList<Integer> getHandlers(){
 		return handlers;
 	}
 	
