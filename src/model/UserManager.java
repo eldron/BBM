@@ -7,9 +7,14 @@ import server.ServerMain;
 // manage BBM users, provide user information for other classes
 public class UserManager {
 	private static UserManager userManager = null;// singleton
+	private int maxUserID;
+	private int maxRequestID;
+	
 	private UserManager(){
 		allUsers = new HashMap<Integer, User>();
 		allRequests = new HashMap<Integer, Request>();
+		maxUserID = -1;
+		maxRequestID = -1;
 	}
 	
 	public static UserManager getUserManager(){
@@ -29,6 +34,9 @@ public class UserManager {
 					String handledrequests = rs.getString("handledrequests");
 					User user = new User(id, name, score, friends, raisedrequests, handledrequests);
 					userManager.allUsers.put(id, user);
+					if(id > userManager.maxUserID){
+						userManager.maxUserID = id;
+					}
 				}
 				
 				rs = ServerMain.getStatement().executeQuery("SELECT * FROM REQUESTS;");
@@ -42,6 +50,9 @@ public class UserManager {
 					int handled = rs.getInt("handled");
 					Request request = new Request(id, content, time, location, owner, handlers, handled);
 					userManager.allRequests.put(id, request);
+					if(id > userManager.maxRequestID){
+						userManager.maxRequestID = id;
+					}
 				}
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -56,8 +67,29 @@ public class UserManager {
 	private HashMap<Integer, Request> allRequests;// store all requests, key is request's ID
 	
 	// register a user, needs database access
-	public synchronized void register(String name){
+	// new User instance, add it into allUsers hashmap, insert into table USERS
+	// returns registered user ID if successful, returns -1 if not
+	public synchronized int register(String name){
+		maxUserID++;
+		User user = new User(maxUserID, name, 0, "", "", "");
+		allUsers.put(maxUserID, user);
 		
+		String sql = "INSERT INTO USERS (ID, NAME, SCORE, FRIENDS, RAISEDREQUESTS, HANDLEDREQUESTS) " +
+					"VALUES(" + user.getID() + ", " +
+					user.getName() + ", " +
+					user.getScore() + ", " + 
+					user.getFriendsString() + ", " +
+					user.getRaisedRequestsString() + ", " +
+					user.getHandledRequestsString() + ");";
+		try {
+			ServerMain.getStatement().executeUpdate(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return -1;
+		}
+		
+		return user.getID();
 	}
 	
 	public User getUserByID(int id){
