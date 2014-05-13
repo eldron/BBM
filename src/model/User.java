@@ -2,26 +2,38 @@ package model;
 
 import java.util.ArrayList;
 
+import net.DataSender;
+
 public class User {
 	private int id;// unique for every user, start from 0
 	private String name;// user name, also unique for every user
-	private String ip;// set user's ip when user logged in
+	private String pswd;// user's password
 	private boolean loggedin;
 	private ArrayList<Integer> friends;
 	private int score;
 	private ArrayList<Integer> raisedRequests;
 	private ArrayList<Integer> handledRequests;
+	private DataSender sender;
+	
+	public DataSender getDataSender(){
+		return sender;
+	}
+	
+	public void setDataSender(DataSender value){
+		sender = value;
+	}
 	
 	public User(){
 		
 	}
 	
-	public User(int id, String name, int score, String f, String raisedrequests, String handledrequests){
+	public User(int id, String name, String pswd, int score, String f, String raisedrequests, String handledrequests){
 		this.id = id;
 		this.name = name;
+		this.pswd = pswd;
 		this.score = score;
-		ip = null;
 		loggedin = false;
+		sender = null;
 		
 		this.friends = new ArrayList<Integer>();
 		if(f.length() > 0){
@@ -62,12 +74,12 @@ public class User {
 		return name;
 	}
 	
-	public void setIP(String value){
-		ip = value;
+	public String getPswd(){
+		return pswd;
 	}
 	
-	public String getIP(){
-		return ip;
+	public void setPswd(String value){
+		this.pswd = value;
 	}
 	
 	public void setLoggedin(boolean value){

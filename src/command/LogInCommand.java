@@ -1,12 +1,12 @@
 package command;
 
-import genDoc.RegisterResultDocGen;
+import genDoc.LogInResultDocGen;
 import model.UserManager;
 import net.DataSender;
-import net.SocketHandler;
+
 import org.jdom.Document;
 
-public class RegisterCommand extends ICommand {
+public class LogInCommand extends ICommand {
 	private String name;
 	private String pswd;
 	
@@ -20,8 +20,9 @@ public class RegisterCommand extends ICommand {
 	@Override
 	public void act(DataSender sender, UserManager userManager) {
 		// TODO Auto-generated method stub
-		int id = userManager.register(sender, name, pswd);
-		Document doc = RegisterResultDocGen.genDoc(id);
+		int id = userManager.login(sender, name, pswd);
+		Document doc = LogInResultDocGen.genDoc(id);
 		sender.add(doc);
 	}
+
 }

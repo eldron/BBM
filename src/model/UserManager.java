@@ -2,6 +2,7 @@ package model;
 import java.util.HashMap;
 import java.sql.*;
 
+import net.DataSender;
 import server.ServerMain;
 
 // manage BBM users, provide user information for other classes
@@ -28,11 +29,12 @@ public class UserManager {
 				while(rs.next()){
 					int id = rs.getInt("id");
 					String name = rs.getString("name");
+					String pswd = rs.getString("password");
 					int score = rs.getInt("score");
 					String friends = rs.getString("friends");
 					String raisedrequests = rs.getString("raisedrequests");
 					String handledrequests = rs.getString("handledrequests");
-					User user = new User(id, name, score, friends, raisedrequests, handledrequests);
+					User user = new User(id, name, pswd, score, friends, raisedrequests, handledrequests);
 					userManager.allUsers.put(id, user);
 					if(id > userManager.maxUserID){
 						userManager.maxUserID = id;
@@ -66,17 +68,38 @@ public class UserManager {
 	private HashMap<Integer, User> allUsers;// store all users, key is user's ID
 	private HashMap<Integer, Request> allRequests;// store all requests, key is request's ID
 	
-	// register a user, needs database access
+	// log in a user
+	public synchronized int login(DataSender sender, String name, String pswd){
+		for(User user : allUsers.values()){
+			if(user.getName().equals(name)){
+				if(user.getPswd().equals(pswd)){
+					user.setDataSender(sender);
+					user.setLoggedin(true);
+					return user.getID();
+				}
+			}
+		}
+		
+		return register(sender, name, pswd);
+	}
+	// register a user, then log in, needs database access
 	// new User instance, add it into allUsers hashmap, insert into table USERS
 	// returns registered user ID if successful, returns -1 if not
-	public synchronized int register(String name){
+	public synchronized int register(DataSender sender, String name, String pswd){
+		for(User user : allUsers.values()){
+			if(user.getName().equals(name)){
+				return -1;
+			}
+		}
+		
 		maxUserID++;
-		User user = new User(maxUserID, name, 0, "", "", "");
+		User user = new User(maxUserID, name, pswd, 0, "", "", "");
 		allUsers.put(maxUserID, user);
 		
-		String sql = "INSERT INTO USERS (ID, NAME, SCORE, FRIENDS, RAISEDREQUESTS, HANDLEDREQUESTS) " +
+		String sql = "INSERT INTO USERS (ID, NAME, PASSWORD, SCORE, FRIENDS, RAISEDREQUESTS, HANDLEDREQUESTS) " +
 					"VALUES(" + user.getID() + ", " +
 					user.getName() + ", " +
+					user.getPswd() + ", " +
 					user.getScore() + ", " + 
 					user.getFriendsString() + ", " +
 					user.getRaisedRequestsString() + ", " +
@@ -89,6 +112,8 @@ public class UserManager {
 			return -1;
 		}
 		
+		user.setLoggedin(true);
+		user.setDataSender(sender);
 		return user.getID();
 	}
 	

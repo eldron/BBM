@@ -6,6 +6,10 @@ import model.UserManager;
 import command.ICommand;
 
 public class SocketHandler implements Runnable {
+	public Socket getSocket(){
+		return socket;
+	}
+	
 	private Socket socket;
 	private UserManager userManager;
 	

@@ -12,9 +12,7 @@ public class ServerMain {
 	private static ExecutorService pool;
 	private static Connection c = null;
 	private static Statement stmt = null;
-//	public static Connection getDatabaseConnection(){
-//		return c;
-//	}
+	
 	public static Statement getStatement(){
 		return stmt;
 	}
